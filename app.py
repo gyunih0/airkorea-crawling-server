@@ -9,9 +9,9 @@ api = Api(app)
 @api.route('/air/<string:sido>')
 class Air_sido(Resource):
     def get(self, sido):
-        result = {}
+        response = {}
         row = []
-        result['Area'] = sido
+        response['Area'] = sido
         data_lists = scrape(sido)
 
         for data_list in data_lists:
@@ -20,18 +20,18 @@ class Air_sido(Resource):
                 semi_result[data_name[i]] = data_list[i]
             row.append(semi_result)
 
-        result['row'] = row
+        response['row'] = row
 
-        return result
+        return jsonify(response)
 
 
 @api.route('/air/<string:sido>/<string:loc>')
 class Air_loc(Resource):
     def get(self, sido, loc):
-        result = {}
+        response = {}
         row = []
-        result['Area'] = sido
-        result['Location'] = loc
+        response['Area'] = sido
+        response['Location'] = loc
 
         data_list = scrape(sido, loc)
         for i in range(1, len(data_list)):
@@ -40,32 +40,32 @@ class Air_loc(Resource):
             semi_result['PM2.5'] = data_list[i]['PM2.5']
             semi_result['PM10'] = data_list[i]['PM10']
             row.append(semi_result)
-        result['row'] = row
+        response['row'] = row
 
-        return result
+        return jsonify(response)
 
 
 @api.route('/air/<string:sido>/<string:loc>/<int:hour>')
 class Air_loc_hour(Resource):
     def get(self, sido, loc, hour):
-        result = {}
-        result['Area'] = sido
-        result['Location'] = loc
-        result['Hour'] = hour
+        response = {}
+        response['Area'] = sido
+        response['Location'] = loc
+        response['Hour'] = hour
 
         data_list = scrape(sido, loc)
-        result['PM2.5'] = data_list[hour+3]['PM2.5']
-        result['PM10'] = data_list[hour+3]['PM10']
+        response['PM2.5'] = data_list[hour+3]['PM2.5']
+        response['PM10'] = data_list[hour+3]['PM10']
 
-        return result
+        return jsonify(response)
 
 
 @api.route('/air/<string:sido>/<string:loc>/latestData')
 class Air_loc_now(Resource):
     def get(self, sido, loc):
-        result = {}
-        result['Area'] = sido
-        result['Location'] = loc
+        response = {}
+        response['Area'] = sido
+        response['Location'] = loc
 
         data_list = scrape(sido, loc)
 
@@ -74,26 +74,26 @@ class Air_loc_now(Resource):
         while (data_list[i]['PM2.5'] != ''):
             i += 1
 
-        result['Hour'] = i-4
-        result['PM2.5'] = data_list[i-1]['PM2.5']
-        result['PM10'] = data_list[i-1]['PM10']
+        response['Hour'] = i-4
+        response['PM2.5'] = data_list[i-1]['PM2.5']
+        response['PM10'] = data_list[i-1]['PM10']
 
-        return result
+        return jsonify(response)
 
 
 @api.route('/air/<string:sido>/<string:loc>/<string:item>')
 class Air_loc_item(Resource):
     def get(self, sido, loc, item):
-        result = {}
-        result['Area'] = sido
-        result['Location'] = loc
-        result['Item'] = item
+        response = {}
+        response['Area'] = sido
+        response['Location'] = loc
+        response['Item'] = item
 
         data_list = scrape_one(sido, loc, item)
         for i in range(len(data_list)):
-            result[data_name[i]] = data_list[i]
+            response[data_name[i]] = data_list[i]
 
-        return result
+        return jsonify(response)
 
 
 if __name__ == '__main__':
